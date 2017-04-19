@@ -58,10 +58,10 @@ public class ThriftParquetFileReaderWriterFactoryTest extends TestCase {
         Mockito.when(config.getFileReaderWriterFactory())
                 .thenReturn(ThriftParquetFileReaderWriterFactory.class.getName());
         Mockito.when(config.getThriftProtocolClass())
-        .thenReturn(TCompactProtocol.class.getName());        
+                .thenReturn(TCompactProtocol.class.getName());
 
         LogFilePath tempLogFilePath = new LogFilePath(Files.createTempDir().toString(), "test-pb-topic",
-                new String[] { "part-1" }, 0, 1, 23232, ".log");
+                                                      new String[] { "part-1" }, 0, 1, 23232, ".log", "key");
 
         FileWriter fileWriter = ReflectionUtil.createFileWriter(config.getFileReaderWriterFactory(), tempLogFilePath,
                 null, config);
@@ -79,7 +79,7 @@ public class ThriftParquetFileReaderWriterFactoryTest extends TestCase {
         FileReader fileReader = ReflectionUtil.createFileReader(config.getFileReaderWriterFactory(), tempLogFilePath,
                 null, config);
         TDeserializer deserializer = new TDeserializer(new TCompactProtocol.Factory());
-        
+
         KeyValue kvout = fileReader.next();
         assertEquals(kv1.getOffset(), kvout.getOffset());
         assertArrayEquals(kv1.getValue(), kvout.getValue());

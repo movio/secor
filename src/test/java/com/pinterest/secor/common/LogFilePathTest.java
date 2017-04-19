@@ -33,12 +33,22 @@ public class LogFilePathTest extends TestCase {
     private static final int GENERATION = 10;
     private static final int KAFKA_PARTITION = 0;
     private static final long LAST_COMMITTED_OFFSET = 100;
+    private static final String MSG_KEY = "key";
     private static final String PATH =
         "/some_parent_dir/some_topic/some_partition/some_other_partition/" +
         "10_0_00000000000000000100";
     private static final String CRC_PATH =
-            "/some_parent_dir/some_topic/some_partition/some_other_partition/" +
-            ".10_0_00000000000000000100.crc";
+        "/some_parent_dir/some_topic/some_partition/some_other_partition/" +
+        ".10_0_00000000000000000100.crc";
+    private static final String EXPECTED_PATH =
+        "/some_parent_dir/some_topic/some_partition/some_other_partition/" +
+        MSG_KEY + "/" +
+        "10_0_00000000000000000100";
+    private static final String EXPECTED_CRC_PATH =
+        "/some_parent_dir/some_topic/some_partition/some_other_partition/" +
+        MSG_KEY + "/" +
+        ".10_0_00000000000000000100.crc";
+
 
     private LogFilePath mLogFilePath;
 
@@ -46,26 +56,27 @@ public class LogFilePathTest extends TestCase {
     protected void setUp() throws Exception {
         super.setUp();
         mLogFilePath = new LogFilePath(PREFIX, TOPIC, PARTITIONS, GENERATION, KAFKA_PARTITION,
-                                       LAST_COMMITTED_OFFSET, "");
+                                       LAST_COMMITTED_OFFSET, "", MSG_KEY);
     }
 
     public void testConstructFromMessage() throws Exception {
-        ParsedMessage message = new ParsedMessage(TOPIC, KAFKA_PARTITION, 1000, null,
+        ParsedMessage message = new ParsedMessage(TOPIC, KAFKA_PARTITION, 1000, MSG_KEY.getBytes(),
                                                   "some_payload".getBytes(), PARTITIONS);
         LogFilePath logFilePath = new LogFilePath(PREFIX, GENERATION, LAST_COMMITTED_OFFSET,
-                                                  message, "");
-        assertEquals(PATH, logFilePath.getLogFilePath());
+                                                  message, "", MSG_KEY);
+        assertEquals(EXPECTED_PATH, logFilePath.getLogFilePath());
     }
 
     public void testConstructFromPath() throws Exception {
-        LogFilePath logFilePath = new LogFilePath("/some_parent_dir", PATH);
+        LogFilePath logFilePath = new LogFilePath("/some_parent_dir", PATH, MSG_KEY);
 
-        assertEquals(PATH, logFilePath.getLogFilePath());
+        assertEquals(EXPECTED_PATH, logFilePath.getLogFilePath());
         assertEquals(TOPIC, logFilePath.getTopic());
         assertTrue(Arrays.equals(PARTITIONS, logFilePath.getPartitions()));
         assertEquals(GENERATION, logFilePath.getGeneration());
         assertEquals(KAFKA_PARTITION, logFilePath.getKafkaPartition());
         assertEquals(LAST_COMMITTED_OFFSET, logFilePath.getOffset());
+        assertEquals(MSG_KEY, mLogFilePath.getKafkaKey());
     }
 
     public void testGetters() throws Exception {
@@ -74,13 +85,14 @@ public class LogFilePathTest extends TestCase {
         assertEquals(GENERATION, mLogFilePath.getGeneration());
         assertEquals(KAFKA_PARTITION, mLogFilePath.getKafkaPartition());
         assertEquals(LAST_COMMITTED_OFFSET, mLogFilePath.getOffset());
+        assertEquals(MSG_KEY, mLogFilePath.getKafkaKey());
     }
 
     public void testGetLogFilePath() throws Exception {
-        assertEquals(PATH, mLogFilePath.getLogFilePath());
+        assertEquals(EXPECTED_PATH, mLogFilePath.getLogFilePath());
     }
 
     public void testGetLogFileCrcPath() throws Exception {
-        assertEquals(CRC_PATH, mLogFilePath.getLogFileCrcPath());
+        assertEquals(EXPECTED_CRC_PATH, mLogFilePath.getLogFileCrcPath());
     }
 }

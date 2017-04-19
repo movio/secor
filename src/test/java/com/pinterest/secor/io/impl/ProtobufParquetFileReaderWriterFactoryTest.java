@@ -56,7 +56,7 @@ public class ProtobufParquetFileReaderWriterFactoryTest extends TestCase {
                 .thenReturn(ProtobufParquetFileReaderWriterFactory.class.getName());
 
         LogFilePath tempLogFilePath = new LogFilePath(Files.createTempDir().toString(), "test-pb-topic",
-                new String[] { "part-1" }, 0, 1, 23232, ".log");
+                                                      new String[] { "part-1" }, 0, 1, 23232, ".log", "key");
 
         FileWriter fileWriter = ReflectionUtil.createFileWriter(config.getFileReaderWriterFactory(), tempLogFilePath,
                 null, config);

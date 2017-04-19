@@ -90,7 +90,7 @@ public class UploaderTest extends TestCase {
 
         mLogFilePath = new LogFilePath("/some_parent_dir",
                 "/some_parent_dir/some_topic/some_partition/some_other_partition/"
-                        + "10_0_00000000000000000010");
+                                       + "10_0_00000000000000000010", "key");
 
         mConfig = Mockito.mock(SecorConfig.class);
         Mockito.when(mConfig.getLocalPath()).thenReturn("/some_parent_dir");
@@ -139,10 +139,10 @@ public class UploaderTest extends TestCase {
         Mockito.verify(mZookeeperConnector).lock(lockPath);
         PowerMockito.verifyStatic();
         FileUtil.moveToCloud(
-                "/some_parent_dir/some_topic/some_partition/some_other_partition/"
+                "/some_parent_dir/some_topic/some_partition/some_other_partition/key/"
                         + "10_0_00000000000000000010",
                 "s3a://some_bucket/some_s3_parent_dir/some_topic/some_partition/"
-                        + "some_other_partition/10_0_00000000000000000010");
+                        + "some_other_partition/key/10_0_00000000000000000010");
         Mockito.verify(mFileRegistry).deleteTopicPartition(mTopicPartition);
         Mockito.verify(mZookeeperConnector).setCommittedOffsetCount(
                 mTopicPartition, 1L);
@@ -186,10 +186,10 @@ public class UploaderTest extends TestCase {
         Mockito.verify(mZookeeperConnector).lock(lockPath);
         PowerMockito.verifyStatic();
         FileUtil.moveToCloud(
-                "/some_parent_dir/some_topic/some_partition/some_other_partition/"
+                "/some_parent_dir/some_topic/some_partition/some_other_partition/key/"
                         + "10_0_00000000000000000010",
                 "s3a://some_bucket/some_s3_parent_dir/some_topic/some_partition/"
-                        + "some_other_partition/10_0_00000000000000000010");
+                        + "some_other_partition/key/10_0_00000000000000000010");
         Mockito.verify(mFileRegistry).deleteTopicPartition(mTopicPartition);
         Mockito.verify(mZookeeperConnector).setCommittedOffsetCount(
                 mTopicPartition, 21L);
@@ -251,7 +251,7 @@ public class UploaderTest extends TestCase {
         LogFilePath dstLogFilePath = new LogFilePath(
                 "/some_parent_dir/some_message_dir",
                 "/some_parent_dir/some_message_dir/some_topic/some_partition/"
-                        + "some_other_partition/10_0_00000000000000000021");
+                + "some_other_partition/10_0_00000000000000000021", "key");
         Mockito.when(mFileRegistry.getOrCreateWriter(dstLogFilePath, null))
                 .thenReturn(writer);
 

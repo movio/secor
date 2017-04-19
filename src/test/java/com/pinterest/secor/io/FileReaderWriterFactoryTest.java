@@ -60,6 +60,9 @@ public class FileReaderWriterFactoryTest extends TestCase {
     private static final String BASENAME = "10_0_00000000000000000100";
     private static final String PATH = DIR + "/" + BASENAME;
     private static final String PATH_GZ = DIR + "/" + BASENAME + ".gz";
+    private static final String MSG_KEY = "key";
+    private static final String EXPECTED_PATH = DIR + "/" + MSG_KEY + "/" + BASENAME;
+    private static final String EXPECTED_PATH_GZ = DIR + "/" + MSG_KEY + "/" + BASENAME + ".gz";
 
     private LogFilePath mLogFilePath;
     private LogFilePath mLogFilePathGz;
@@ -68,8 +71,8 @@ public class FileReaderWriterFactoryTest extends TestCase {
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        mLogFilePath = new LogFilePath("/some_parent_dir", PATH);
-        mLogFilePathGz = new LogFilePath("/some_parent_dir", PATH_GZ);
+        mLogFilePath = new LogFilePath("/some_parent_dir", PATH, MSG_KEY);
+        mLogFilePathGz = new LogFilePath("/some_parent_dir", PATH_GZ, MSG_KEY);
     }
 
     private void setupSequenceFileReaderConfig() {
@@ -93,7 +96,7 @@ public class FileReaderWriterFactoryTest extends TestCase {
                 FileSystem.get(Mockito.any(URI.class),
                         Mockito.any(Configuration.class))).thenReturn(fs);
 
-        Path fsPath = (!isCompressed) ? new Path(PATH) : new Path(PATH_GZ);
+        Path fsPath = (!isCompressed) ? new Path(EXPECTED_PATH) : new Path(EXPECTED_PATH_GZ);
 
         GzipCodec codec = PowerMockito.mock(GzipCodec.class);
         PowerMockito.whenNew(GzipCodec.class).withNoArguments()
@@ -126,7 +129,7 @@ public class FileReaderWriterFactoryTest extends TestCase {
                 FileSystem.get(Mockito.any(URI.class),
                         Mockito.any(Configuration.class))).thenReturn(fs);
 
-        Path fsPath = (!isCompressed) ? new Path(PATH) : new Path(PATH_GZ);
+        Path fsPath = (!isCompressed) ? new Path(EXPECTED_PATH) : new Path(EXPECTED_PATH_GZ);
 
         SequenceFile.Reader reader = PowerMockito
                 .mock(SequenceFile.Reader.class);

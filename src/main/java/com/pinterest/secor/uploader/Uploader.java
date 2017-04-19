@@ -161,7 +161,7 @@ public class Uploader {
                         dstPath = new LogFilePath(localPrefix, srcPath.getTopic(),
                                                   srcPath.getPartitions(), srcPath.getGeneration(),
                                                   srcPath.getKafkaPartition(), startOffset,
-                                                  extension);
+                                                  extension, srcPath.getKafkaKey());
                         writer = mFileRegistry.getOrCreateWriter(dstPath,
                         		codec);
                     }

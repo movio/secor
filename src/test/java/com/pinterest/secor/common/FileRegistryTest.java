@@ -47,6 +47,12 @@ public class FileRegistryTest extends TestCase {
             + "10_0_00000000000000000100.gz";
     private static final String CRC_PATH = "/some_parent_dir/some_topic/some_partition/some_other_partition/"
             + ".10_0_00000000000000000100.crc";
+    private static final String EXPECTED_PATH = "/some_parent_dir/some_topic/some_partition/some_other_partition/key/"
+        + "10_0_00000000000000000100";
+    private static final String EXPECTED_PATH_GZ = "/some_parent_dir/some_topic/some_partition/some_other_partition/key/"
+        + "10_0_00000000000000000100.gz";
+    private static final String EXPECTED_CRC_PATH = "/some_parent_dir/some_topic/some_partition/some_other_partition/key/"
+        + ".10_0_00000000000000000100.crc";
     private LogFilePath mLogFilePath;
     private LogFilePath mLogFilePathGz;
     private TopicPartition mTopicPartition;
@@ -60,9 +66,9 @@ public class FileRegistryTest extends TestCase {
         properties.addProperty("secor.file.age.youngest", true);
         SecorConfig secorConfig = new SecorConfig(properties);
         mRegistry = new FileRegistry(secorConfig);
-        mLogFilePath = new LogFilePath("/some_parent_dir", PATH);
+        mLogFilePath = new LogFilePath("/some_parent_dir", PATH, "key");
         mTopicPartition = new TopicPartition("some_topic", 0);
-        mLogFilePathGz = new LogFilePath("/some_parent_dir", PATH_GZ);
+        mLogFilePathGz = new LogFilePath("/some_parent_dir", PATH_GZ, "key");
     }
 
     private FileWriter createWriter() throws Exception {
@@ -103,9 +109,9 @@ public class FileRegistryTest extends TestCase {
         );
 
         PowerMockito.verifyStatic();
-        FileUtil.delete(PATH);
+        FileUtil.delete(EXPECTED_PATH);
         PowerMockito.verifyStatic();
-        FileUtil.delete(CRC_PATH);
+        FileUtil.delete(EXPECTED_CRC_PATH);
 
         TopicPartition topicPartition = new TopicPartition("some_topic", 0);
         Collection<TopicPartition> topicPartitions = mRegistry
@@ -159,9 +165,9 @@ public class FileRegistryTest extends TestCase {
 
         // Verify that the method has been called exactly once (the default).
         PowerMockito.verifyStatic();
-        FileUtil.delete(PATH_GZ);
+        FileUtil.delete(EXPECTED_PATH_GZ);
         PowerMockito.verifyStatic();
-        FileUtil.delete(CRC_PATH);
+        FileUtil.delete(EXPECTED_CRC_PATH);
 
         PowerMockito.verifyStatic();
         ReflectionUtil.createFileWriter(Mockito.any(String.class),
@@ -189,9 +195,9 @@ public class FileRegistryTest extends TestCase {
 
         mRegistry.deletePath(mLogFilePath);
         PowerMockito.verifyStatic();
-        FileUtil.delete(PATH);
+        FileUtil.delete(EXPECTED_PATH);
         PowerMockito.verifyStatic();
-        FileUtil.delete(CRC_PATH);
+        FileUtil.delete(EXPECTED_CRC_PATH);
 
         assertTrue(mRegistry.getPaths(mTopicPartition).isEmpty());
         assertTrue(mRegistry.getTopicPartitions().isEmpty());
@@ -204,9 +210,9 @@ public class FileRegistryTest extends TestCase {
 
         mRegistry.deleteTopicPartition(mTopicPartition);
         PowerMockito.verifyStatic();
-        FileUtil.delete(PATH);
+        FileUtil.delete(EXPECTED_PATH);
         PowerMockito.verifyStatic();
-        FileUtil.delete(CRC_PATH);
+        FileUtil.delete(EXPECTED_CRC_PATH);
 
         assertTrue(mRegistry.getTopicPartitions().isEmpty());
         assertTrue(mRegistry.getPaths(mTopicPartition).isEmpty());

@@ -47,8 +47,8 @@
     </scm>
 
     <properties>
-        <maven.compiler.source>1.6</maven.compiler.source>
-        <maven.compiler.target>1.6</maven.compiler.target>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
         <encoding>UTF-8</encoding>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <parquet.version>1.8.1</parquet.version>
@@ -87,6 +87,11 @@
     </pluginRepositories>
 
     <dependencies>
+	<dependency>
+	    <groupId>com.twitter</groupId>
+	    <artifactId>ostrich_2.11</artifactId>
+	    <version>9.13.0</version>
+	</dependency>
         <dependency>
             <groupId>com.google.protobuf</groupId>
             <artifactId>protobuf-java</artifactId>
@@ -230,11 +235,6 @@
             <groupId>org.apache.thrift</groupId>
             <artifactId>libthrift</artifactId>
             <version>0.5.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.twitter</groupId>
-            <artifactId>ostrich_2.10</artifactId>
-            <version>9.2.1</version>
         </dependency>
         <dependency>
             <groupId>com.twitter.common.zookeeper</groupId>
@@ -584,7 +584,7 @@
             <dependencies>
                 <dependency>
                     <groupId>org.apache.kafka</groupId>
-                    <artifactId>kafka_2.10</artifactId>
+                    <artifactId>kafka_2.11</artifactId>
                     <version>0.8.2.1</version>
                     <exclusions>
                         <exclusion>
@@ -603,7 +603,7 @@
             <dependencies>
                 <dependency>
                     <groupId>org.apache.kafka</groupId>
-                    <artifactId>kafka_2.10</artifactId>
+                    <artifactId>kafka_2.11</artifactId>
                     <version>0.8.2.1</version>
                     <exclusions>
                         <exclusion>
@@ -619,8 +619,8 @@
             <dependencies>
                 <dependency>
                     <groupId>org.apache.kafka</groupId>
-                    <artifactId>kafka_2.10</artifactId>
-                    <version>0.10.2.0</version>
+                    <artifactId>kafka_2.11</artifactId>
+                    <version>0.10.0.1</version>
                     <exclusions>
                         <exclusion>
                             <groupId>org.slf4j</groupId>

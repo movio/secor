@@ -53,11 +53,12 @@ public class LogFilePath {
     private final int[] mKafkaPartitions;
     private final long[] mOffsets;
     private final String mExtension;
+    private final String mKey;
     private MessageDigest messageDigest;
 
 
     public LogFilePath(String prefix, String topic, String[] partitions, int generation,
-                       int[] kafkaPartitions, long[] offsets, String extension) {
+                       int[] kafkaPartitions, long[] offsets, String extension, String key) {
         assert kafkaPartitions != null & kafkaPartitions.length >= 1
             : "Wrong kafkaParttions: " + Arrays.toString(kafkaPartitions);
         assert offsets != null & offsets.length >= 1 : "Wrong offsets: " + Arrays.toString(offsets);
@@ -76,6 +77,7 @@ public class LogFilePath {
         mKafkaPartitions = Arrays.copyOf(kafkaPartitions, kafkaPartitions.length);
         mOffsets = Arrays.copyOf(offsets, offsets.length);
         mExtension = extension;
+        mKey = key;
 
         try {
             messageDigest = MessageDigest.getInstance("MD5");
@@ -85,19 +87,19 @@ public class LogFilePath {
     }
 
     public LogFilePath(String prefix, int generation, long lastCommittedOffset,
-                       ParsedMessage message, String extension) {
+                       ParsedMessage message, String extension, String key) {
         this(prefix, message.getTopic(), message.getPartitions(), generation,
             new int[]{message.getKafkaPartition()}, new long[]{lastCommittedOffset},
-            extension);
+             extension, key);
     }
 
     public LogFilePath(String prefix, String topic, String[] partitions, int generation,
-                       int kafkaPartition, long offset, String extension) {
+                       int kafkaPartition, long offset, String extension, String key) {
         this(prefix, topic, partitions, generation, new int[]{kafkaPartition},
-            new long[]{offset}, extension);
+             new long[]{offset}, extension, key);
     }
 
-    public LogFilePath(String prefix, String path) {
+    public LogFilePath(String prefix, String path, String key) {
         assert path.startsWith(prefix): path + ".startsWith(" + prefix + ")";
 
         mPrefix = prefix;
@@ -129,6 +131,7 @@ public class LogFilePath {
         mGeneration = Integer.parseInt(basenameElements[0]);
         mKafkaPartitions = new int[]{Integer.parseInt(basenameElements[1])};
         mOffsets = new long[]{Long.parseLong(basenameElements[2])};
+        mKey = key;
     }
 
     private static String[] subArray(String[] array, int startIndex, int endIndex) {
@@ -141,7 +144,7 @@ public class LogFilePath {
 
     public LogFilePath withPrefix(String prefix) {
         return new LogFilePath(prefix, mTopic, mPartitions, mGeneration, mKafkaPartitions, mOffsets,
-            mExtension);
+                               mExtension, mKey);
     }
 
     public String getLogFileParentDir() {
@@ -195,6 +198,13 @@ public class LogFilePath {
 
         ArrayList<String> pathElements = new ArrayList<String>();
         pathElements.add(getLogFileDir());
+        if (mKey != null && mKey.length() > 0) {
+            try {
+                pathElements.add(java.net.URLEncoder.encode(mKey, "UTF-8"));
+            } catch (java.io.UnsupportedEncodingException e) {
+                throw new RuntimeException("UTF-8 is an unknown encoding!?");
+            }
+        }
         pathElements.add(basename);
 
         return StringUtils.join(pathElements, "/") + mExtension;
@@ -205,6 +215,13 @@ public class LogFilePath {
 
         ArrayList<String> pathElements = new ArrayList<String>();
         pathElements.add(getLogFileDir());
+        if (mKey != null && mKey.length() > 0) {
+            try {
+                pathElements.add(java.net.URLEncoder.encode(mKey, "UTF-8"));
+            } catch (java.io.UnsupportedEncodingException e) {
+                throw new RuntimeException("UTF-8 is an unknown encoding!?");
+            }
+        }
         pathElements.add(basename);
 
         return StringUtils.join(pathElements, "/");
@@ -242,6 +259,10 @@ public class LogFilePath {
 
     public String getExtension() {
         return mExtension;
+    }
+
+    public String getKafkaKey() {
+        return mKey;
     }
 
     @Override

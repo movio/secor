@@ -124,7 +124,6 @@ public class DelimitedTextFileReaderWriterFactory implements FileReaderWriterFac
         @Override
         public void write(KeyValue keyValue) throws IOException {
             this.mWriter.write(keyValue.getValue());
-            this.mWriter.write(DELIMITER);
         }
 
         @Override

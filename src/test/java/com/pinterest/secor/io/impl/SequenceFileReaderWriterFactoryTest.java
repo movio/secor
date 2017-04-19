@@ -42,7 +42,8 @@ public class SequenceFileReaderWriterFactoryTest {
                 0,
                 1,
                 0,
-                ".log"
+                ".log",
+                "key"
         );
         FileWriter fileWriter = factory.BuildFileWriter(tempLogFilePath, null);
         KeyValue kv1 = (new KeyValue(23232, new byte[]{23, 45, 40 ,10, 122}));

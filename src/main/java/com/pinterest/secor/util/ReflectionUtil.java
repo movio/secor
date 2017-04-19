@@ -149,6 +149,7 @@ public class ReflectionUtil {
                                               CompressionCodec codec,
                                               SecorConfig config)
             throws Exception {
+        System.out.println(codec);
         return createFileReaderWriterFactory(className, config).BuildFileWriter(logFilePath, codec);
     }
 
